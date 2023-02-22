@@ -1,0 +1,124 @@
+﻿# Visual Studio files
+*.sln
+*.suo
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.vcproj
+*.vcproj.*.user
+*.vshost.*
+*.vspscc
+*.vssscc
+*.vsix
+*.vsct
+*.obj
+*.pdb
+*.cache
+*.ilk
+*.ipdb
+*.iobj
+*.log
+*.tlog
+*.tlog.*
+*.lastbuildstate
+*.lastcodeanalysissucceeded
+*.UserSettings
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+build/
+[Bb]in/
+[Oo]bj/
+[Tt]est[Rr]esult*/
+[Tt]est[Rr]eport*/
+$(SolutionDir)**/[Tt]est[Rr]esult*/
+$(SolutionDir)**/[Tt]est[Rr]eport*/
+
+# NuGet
+packages/
+*.nupkg
+# NuGet v3's project.json files
+project.lock.json
+project.fragment.lock.json
+# MSBuild binary and structed log files
+*.msbuild.binlog
+*.binlog
+
+# Resharper files
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# CodeRush files
+_CR_*/
+*.crproj.user
+
+# GhostDoc
+[Ff]ileListAdvanced.xml
+*.ghostrider.xml
+
+# StyleCop
+StyleCop.Cache
+_StyleCopReport.xml
+
+# ReSharper and Code Analysis Directories
+_ReSharper*/
+*.sln.DotSettings.user
+
+# SQL Server files
+*.mdf
+*.ldf
+*.ndf
+
+# Test files
+testresults/
+[Tt]est[Rr]esult*/
+[Tt]est[Rr]eport*/
+$(SolutionDir)**/[Tt]est[Rr]esult*/
+$(SolutionDir)**/[Tt]est[Rr]eport*/
+
+# GhostDoc generated documentation
+Documentation/
+doc/
+docs/
+help/
+Help/
+_Help/
+GeneratedDoc/
+
+# Misc
+node_modules/
+bower_components/
+.sass-cache/
+*.psess
+*.dbmdl
+*.dbproj.user
+*.scc
+*.crdownload
+*.swp
+*.lock
+*.tmp
+*.exe
+*.out
+*.app
+*.zip
+*.paket.zip
+*.snupkg
+*.nuspec
+*.psd1
+*.psm1
+*.ps1xml
+*.log
+*.user
+*.vssettings
+*.vsssln
+*.vsdconfig
+*.sln.docstates
+*.sln.ide
+*.sln.dotsettings
+*.dotCover
+*.dotMemory
+*.dotTrace
+*.vs
