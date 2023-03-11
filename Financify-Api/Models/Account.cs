@@ -2,9 +2,20 @@
 {
     public class Account
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public Balance Balance { get; set; }
-        public User User { get; set; }
+        public Guid Id { get; set; }
+
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+
+        public string Email { get; set; }
+
+        public string Password { get; set; }
+
+        public decimal Balance { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+
+        public DateTime UpdatedAt { get; set; }
     }
 }
