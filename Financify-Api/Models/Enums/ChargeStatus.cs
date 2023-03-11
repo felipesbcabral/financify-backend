@@ -4,11 +4,11 @@ namespace Financify_Api.Models.Enums
 {
     public enum ChargeStatus
     {
-        [Description("Already payed")]
+        [Description("Payed")]
         Payed = 1,
-        [Description("Passed the limit date")]
+        [Description("Expired")]
         Late = 2,
-        [Description("Pending to pay")]
+        [Description("Pending")]
         Pending = 3,
     }
 }

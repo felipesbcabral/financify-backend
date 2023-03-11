@@ -1,5 +1,7 @@
 ﻿using Financify_Api.Data;
 using Financify_Api.Models;
+using Financify_Api.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Financify_Api.Repositories
 {
@@ -12,62 +14,34 @@ namespace Financify_Api.Repositories
             _dbContext = financifyContext;
         }
 
-        public async Task<IEnumerable<Charge>> GetAllCharges()
+        public async Task<Charge> GetByIdAsync(Guid id)
         {
-            return await _dbContext.Charges.ToListAsync();
+            return await _dbContext.Set<Charge>()
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
-
-        public async Task<Charge> GetChargeById(int id)
+        public async Task<IEnumerable<Charge>> GetAllAsync()
         {
-            var charge = await _dbContext.Charges.FirstOrDefaultAsync(x => x.Id == id);
-
-            if (charge == null)
-            {
-                throw new Exception($"Charge for the specified {id} was not found");
-            }
-
-            return charge;
+            return await _dbContext.Set<Charge>()
+                .ToListAsync();
         }
 
-
-        public async Task<Charge> CreateNewCharge(Charge charge)
+        public async Task AddAsync(Charge charge)
         {
-            await _dbContext.Charges.AddAsync(charge);
+            await _dbContext.Set<Charge>().AddAsync(charge);
             await _dbContext.SaveChangesAsync();
-
-            return charge;
         }
 
-        public async Task<Charge> UpdateCharge(Charge charge, int id)
+        public async Task UpdateAsync(Charge charge)
         {
-            Charge chargeSaved = await GetChargeById(id);
-
-            if (chargeSaved == null)
-            {
-                throw new Exception($"Charge for the especified {id} was not found");
-            }
-
-            chargeSaved.Name = charge.Name;
-            chargeSaved.DueDate = charge.DueDate;
-            chargeSaved.Status = charge.Status;
-            chargeSaved.Value = charge.Value;
-
-
-            _dbContext.Charges.Update(chargeSaved);
+            _dbContext.Entry(charge).State = EntityState.Modified;
             await _dbContext.SaveChangesAsync();
-
-            return chargeSaved;
         }
 
-        public async Task<bool> DeleteCharge(int id)
+        public async Task DeleteAsync(Charge charge)
         {
-            Charge chargeSaved = await GetChargeById(id);
-
-            _dbContext.Charges.Remove(chargeSaved);
+            _dbContext.Set<Charge>().Remove(charge);
             await _dbContext.SaveChangesAsync();
-
-            return true;
         }
     }
 }

@@ -1,52 +1,111 @@
-﻿namespace Financify_Api.Controllers
+﻿using AutoMapper;
+using Financify_Api.Models;
+using Financify_Api.Models.Enums.Extensions;
+using Financify_Api.Models.Responses;
+using Financify_Api.Repositories;
+using Financify_Api.Repositories.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using System.Runtime.InteropServices;
+
+namespace Financify_Api.Controllers
 {
-    public class ChargeController
+    [ApiController]
+    [Route("[controller]")]
+    public class ChargeController : ControllerBase
     {
-        [Route("api/[controller]")]
-        public class ChargeController : ControllerBase
+        private readonly IChargeRepository _chargeRepository;
+        private readonly IAccountRepository _accountRepository;
+        private readonly IMapper _mapper;
+
+        public ChargeController(IChargeRepository chargeRepository, IAccountRepository accountRepository, IMapper mapper)
         {
-            private readonly IChargeRepository _chargeRepository;
+            _chargeRepository = chargeRepository;
+            _accountRepository = accountRepository;
+            _mapper = mapper;
+        }
 
-            public ChargeController(IChargeRepository chargeRepository)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Charge>> GetById(Guid id)
+        {
+            var charge = await _chargeRepository.GetByIdAsync(id);
+            if (charge == null)
             {
-                _chargeRepository = chargeRepository;
+                return NotFound();
             }
 
-            [HttpGet]
-            public async Task<ActionResult<IEnumerable<Charge>>> GetAllCharges()
+            var chargeResponse = _mapper.Map<ChargeResponse>(charge);
+
+            return Ok(chargeResponse);
+        }
+
+        [HttpPost("accounts/{accountId}")]
+        public async Task<ActionResult<Charge>> Create(Guid accountId, [FromBody] Charge charge)
+        {
+            if (!ModelState.IsValid)
             {
-                IEnumerable<Charge> charges = await _chargeRepository.GetAllCharges();
-                return Ok(charges);
+                return BadRequest(ModelState);
             }
 
-            [HttpGet("{id}")]
-            public async Task<ActionResult<Charge>> GetChargeById(int id)
+            // Obtém a Account vinculada à Charge a partir do Id fornecido na rota da requisição
+            var account = await _accountRepository.GetByIdAsync(accountId);
+
+            if (account == null)
             {
-                Charge charge = await _chargeRepository.GetChargeById(id);
-                return Ok(charge);
+                return NotFound("A Account não foi encontrada.");
             }
 
-            [HttpPost]
-            public async Task<ActionResult<Charge>> CreateNewCharge([FromBody] Charge chargeModel)
+            // Vincula a Charge à Account
+            charge.AccountId = accountId;
+            charge.CreatedAt = DateTime.UtcNow;
+            await _chargeRepository.AddAsync(charge);
+
+            // Recupera a Charge recém-criada do banco de dados com todas as propriedades preenchidas
+            var createdCharge = await _chargeRepository.GetByIdAsync(charge.Id);
+
+            var chargeResponse = _mapper.Map<ChargeResponse>(createdCharge);
+
+            return Ok(chargeResponse);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<Charge>> Update(Guid id, [FromBody] Charge charge)
+        {
+            if (!ModelState.IsValid)
             {
-                Charge charge = await _chargeRepository.CreateNewCharge(chargeModel);
-                return Ok(charge);
+                return BadRequest();
             }
 
-            [HttpPut("{id}")]
-            public async Task<ActionResult<Charge>> UpdateCharge([FromBody] Charge chargeModel, int id)
+            var existingCharge = await _chargeRepository.GetByIdAsync(id);
+            if (existingCharge == null)
             {
-                chargeModel.Id = id;
-                Charge charge = await _chargeRepository.UpdateCharge(chargeModel, id);
-                return Ok(charge);
+                return NotFound();
             }
 
-            [HttpDelete("{id}")]
-            public async Task<ActionResult<Charge>> DeleteCharge(int id)
+            existingCharge.Name = charge.Name;
+            existingCharge.DueDate = charge.DueDate;
+            existingCharge.Value = charge.Value;
+            existingCharge.Status = charge.Status;
+            existingCharge.UpdatedAt = DateTime.UtcNow;
+
+            await _chargeRepository.UpdateAsync(existingCharge);
+
+            var chargeResponse = _mapper.Map<ChargeResponse>(existingCharge);
+
+            return Ok(chargeResponse);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(Guid id)
+        {
+            var charge = await _chargeRepository.GetByIdAsync(id);
+            if (charge == null)
             {
-                bool deleted = await _chargeRepository.DeleteCharge(id);
-                return Ok(deleted);
+                return NotFound();
             }
+
+            await _chargeRepository.DeleteAsync(charge);
+
+            return NoContent();
         }
     }
 }

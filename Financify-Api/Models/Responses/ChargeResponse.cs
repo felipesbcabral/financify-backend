@@ -1,12 +1,10 @@
 ﻿using Financify_Api.Models.Enums;
-using Financify_Api.Models.Enums.Extensions;
-using Newtonsoft.Json;
 
-namespace Financify_Api.Models
+namespace Financify_Api.Models.Responses
 {
-    public class Charge
+    public class ChargeResponse
     {
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid Id { get; set; }
 
         public string? Name { get; set; }
 
@@ -14,12 +12,12 @@ namespace Financify_Api.Models
 
         public string? Value { get; set; }
 
+        public string Status { get; set; }
+
         public DateTime CreatedAt { get; set; }
 
         public DateTime UpdatedAt { get; set; }
 
         public Guid AccountId { get; set; }
-
-        public ChargeStatus Status { get; set; }
     }
 }
