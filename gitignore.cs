@@ -10,7 +10,7 @@ obj /
 *.user
 *.psess
 *.vspx
-Migrations
+
 # Ignorar arquivos de configuração do Entity Framework Core
 * */ Migrations/*.cs
 **/Migrations/*.resx
