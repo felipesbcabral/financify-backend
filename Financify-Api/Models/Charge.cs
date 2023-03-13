@@ -21,5 +21,9 @@ namespace Financify_Api.Models
         public Guid AccountId { get; set; }
 
         public ChargeStatus Status { get; set; }
+
+        public string? Description { get; set; }
+
+        public string? PaymentMethod { get; set; }
     }
 }

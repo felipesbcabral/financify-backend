@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using Financify_Api.Models;
-using Financify_Api.Models.Enums.Extensions;
 using Financify_Api.Models.Responses;
-using Financify_Api.Repositories;
 using Financify_Api.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.InteropServices;
 
 namespace Financify_Api.Controllers
 {

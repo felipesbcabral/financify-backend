@@ -1,6 +1,4 @@
-﻿using Financify_Api.Models.Enums;
-
-namespace Financify_Api.Models.Responses
+﻿namespace Financify_Api.Models.Responses
 {
     public class ChargeResponse
     {
@@ -12,7 +10,7 @@ namespace Financify_Api.Models.Responses
 
         public string? Value { get; set; }
 
-        public string Status { get; set; }
+        public string Status { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; }
 
