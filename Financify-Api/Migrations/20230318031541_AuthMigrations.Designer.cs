@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Financify_Api.Migrations
 {
     [DbContext(typeof(FinancifyContext))]
-    [Migration("20230311194126_InitialCreation")]
-    partial class InitialCreation
+    [Migration("20230318031541_AuthMigrations")]
+    partial class AuthMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.3")
+                .HasAnnotation("ProductVersion", "7.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -68,17 +68,17 @@ namespace Financify_Api.Migrations
             modelBuilder.Entity("Financify_Api.Models.Charge", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AccountId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime");
+                    b.Property<DateTime?>("CreatedAt")
+                        .IsRequired()
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DueDate")
-                        .HasMaxLength(50)
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
@@ -88,12 +88,13 @@ namespace Financify_Api.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime");
+                    b.Property<DateTime?>("UpdatedAt")
+                        .IsRequired()
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Value")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
 
@@ -102,15 +103,35 @@ namespace Financify_Api.Migrations
                     b.ToTable("Charges", (string)null);
                 });
 
+            modelBuilder.Entity("Financify_Api.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Password")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Username")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("Financify_Api.Models.Charge", b =>
                 {
-                    b.HasOne("Financify_Api.Models.Account", "Account")
+                    b.HasOne("Financify_Api.Models.Account", null)
                         .WithMany()
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Account");
                 });
 #pragma warning restore 612, 618
         }

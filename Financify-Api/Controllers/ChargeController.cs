@@ -2,6 +2,7 @@
 using Financify_Api.Models;
 using Financify_Api.Models.Responses;
 using Financify_Api.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Financify_Api.Controllers
@@ -22,6 +23,7 @@ namespace Financify_Api.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Charge>> GetById(Guid id)
         {
             var charge = await _chargeRepository.GetByIdAsync(id);
@@ -36,6 +38,7 @@ namespace Financify_Api.Controllers
         }
 
         [HttpPost("accounts/{accountId}")]
+        [Authorize]
         public async Task<ActionResult<Charge>> Create(Guid accountId, [FromBody] Charge charge)
         {
             if (!ModelState.IsValid)
@@ -65,6 +68,7 @@ namespace Financify_Api.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<ActionResult<Charge>> Update(Guid id, [FromBody] Charge charge)
         {
             if (!ModelState.IsValid)

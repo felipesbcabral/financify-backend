@@ -1,5 +1,6 @@
 ﻿using Financify_Api.Models;
 using Financify_Api.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Financify_Api.Controllers
@@ -16,6 +17,7 @@ namespace Financify_Api.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Account>>> GetAll()
         {
             var accounts = await _accountRepository.GetAllAsync();
@@ -29,6 +31,7 @@ namespace Financify_Api.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Account>> GetById(Guid id)
         {
             var account = await _accountRepository.GetByIdAsync(id);
@@ -41,6 +44,7 @@ namespace Financify_Api.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Account>> Create([FromBody] Account account)
         {
             if (!ModelState.IsValid)
@@ -53,6 +57,7 @@ namespace Financify_Api.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<ActionResult<Account>> Update([FromRoute] Guid id, [FromBody] Account account)
         {
             if (!ModelState.IsValid)
@@ -71,7 +76,6 @@ namespace Financify_Api.Controllers
             existingAccount.Email = account.Email;
             existingAccount.Password = account.Password;
             existingAccount.Balance = account.Balance;
-            existingAccount.UpdatedAt = DateTime.UtcNow;
 
             await _accountRepository.UpdateAsync(existingAccount);
 
@@ -79,6 +83,7 @@ namespace Financify_Api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> Delete(Guid id)
         {
             var account = await _accountRepository.GetByIdAsync(id);
@@ -99,5 +104,20 @@ namespace Financify_Api.Controllers
                 return StatusCode(500, "An error occurred while deleting the account.");
             }
         }
+
+
+        //[HttpGet]
+        //[Route("user")]
+        //[Authorize(Roles = "user, admin")] => User aqui pra autorizar o user eu preciso passar na geração do token username: client, password: client 
+        //public async Task<IActionResult> Delete(Guid id)
+        //{
+        //}
+
+        //[HttpGet]
+        //[Route("admin")]
+        //[Authorize(Roles = "admin")] => Admin para entrar no admin e gerar um token admin eu preciso passar username: felp password: felp ai ele vai pra admin
+        //public async Task<IActionResult> Delete(Guid id)
+        //{
+        //}
     }
 }
