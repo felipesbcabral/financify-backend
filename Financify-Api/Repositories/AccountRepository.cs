@@ -27,12 +27,14 @@ namespace Financify_Api.Repositories
 
         public async Task AddAsync(Account account)
         {
+            account.CreatedAt = account.UpdatedAt = DateTime.UtcNow;
             await _dbContext.Set<Account>().AddAsync(account);
             await _dbContext.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(Account account)
         {
+            account.UpdatedAt = DateTime.UtcNow;
             _dbContext.Entry(account).State = EntityState.Modified;
             await _dbContext.SaveChangesAsync();
         }

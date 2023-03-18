@@ -14,16 +14,12 @@ namespace Financify_Api.Models
 
         public string? Value { get; set; }
 
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
 
-        public DateTime UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
         public Guid AccountId { get; set; }
 
         public ChargeStatus Status { get; set; }
-
-        public string? Description { get; set; }
-
-        public string? PaymentMethod { get; set; }
     }
 }
