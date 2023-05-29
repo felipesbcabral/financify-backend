@@ -8,7 +8,7 @@ namespace Financify_Api.Services;
 
 public static class TokenService
 {
-    public static string GenerateToken(User user)
+    public static string GenerateToken(Account account)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(Settings.Secret);
@@ -17,8 +17,7 @@ public static class TokenService
         {
             Subject = new ClaimsIdentity(new[]
             {
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Role, user.Role)
+                new Claim(ClaimTypes.Name, account.Email),
             }),
             Expires = DateTime.UtcNow.AddDays(1),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),

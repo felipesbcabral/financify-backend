@@ -77,6 +77,7 @@ namespace Financify_Api.Controllers
             }
 
             var existingCharge = await _chargeRepository.GetByIdAsync(id);
+
             if (existingCharge == null)
             {
                 return NotFound();
@@ -96,6 +97,7 @@ namespace Financify_Api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult> Delete(Guid id)
         {
             var charge = await _chargeRepository.GetByIdAsync(id);
