@@ -2,11 +2,12 @@
 using Financify_Api.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using BCrypt.Net;
 
 namespace Financify_Api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("v1/[controller]")]
     public class AccountController : ControllerBase
     {
         private readonly IAccountRepository _accountRepository;
@@ -52,6 +53,7 @@ namespace Financify_Api.Controllers
                 return BadRequest();
             }
 
+            account.Password = BCrypt.Net.BCrypt.HashPassword(account.Password);
             await _accountRepository.AddAsync(account);
             return CreatedAtAction(nameof(GetById), new { id = account.Id }, account);
         }

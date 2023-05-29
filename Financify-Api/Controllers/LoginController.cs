@@ -9,29 +9,36 @@ namespace Financify_Api.Controllers
     [Route("v1")]
     public class LoginController : ControllerBase
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IAccountRepository _accountRepository;
 
-        public LoginController(IUserRepository userRepository)
+        public LoginController(IAccountRepository accountRepository)
         {
-            _userRepository = userRepository;
+            _accountRepository = accountRepository;
         }
 
         [HttpPost]
         [Route("login")]
-        public ActionResult<dynamic> Authenticate([FromBody] User model)
+        public ActionResult<dynamic> Authenticate([FromBody] Account model)
         {
-            var user = _userRepository.Get(model.Username, model.Password);
+            var account = _accountRepository.GetByEmail(model.Email);
 
-            if (user == null)
+            if (account == null)
                 return NotFound(new { message = "User of password invalid" });
 
-            var token = TokenService.GenerateToken(user);
+            var isValid = BCrypt.Net.BCrypt.Verify(model.Password, account.Password);
 
-            user.Password = "";
+            if(!isValid) 
+            {
+               return BadRequest("Invalid email or password");
+            }
+
+            var token = TokenService.GenerateToken(account);
+
+            account.Password = "";
 
             return new
             {
-                user,
+                account,
                 token,
             };
         }

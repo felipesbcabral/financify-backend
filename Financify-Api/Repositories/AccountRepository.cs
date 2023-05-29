@@ -14,6 +14,15 @@ namespace Financify_Api.Repositories
             _dbContext = financifyContext;
         }
 
+        public Account GetByEmail(string email)
+        {
+            var account = _dbContext.Set<Account>()
+                .AsEnumerable()
+                .FirstOrDefault(x => string.Equals(x.Email, email, StringComparison.CurrentCultureIgnoreCase));
+
+            return account;
+        }
+
         public async Task<Account> GetByIdAsync(Guid id)
         {
             return await _dbContext.Set<Account>()
