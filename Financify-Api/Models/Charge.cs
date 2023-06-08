@@ -1,6 +1,6 @@
 ﻿using Financify_Api.Models.Enums;
-using Financify_Api.Models.Enums.Extensions;
 using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace Financify_Api.Models
 {
@@ -8,11 +8,14 @@ namespace Financify_Api.Models
     {
         public Guid Id { get; set; } = Guid.NewGuid();
 
-        public string? Name { get; set; }
+        [Required]
+        public string Name { get; set; }
+
+        public string Description { get; set; }
 
         public DateTime? DueDate { get; set; }
 
-        public string? Value { get; set; }
+        public decimal Value { get; set; }
 
         public DateTime? CreatedAt { get; set; }
 
@@ -22,4 +25,5 @@ namespace Financify_Api.Models
 
         public ChargeStatus Status { get; set; }
     }
+
 }

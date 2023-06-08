@@ -23,16 +23,28 @@ namespace Financify_Api.Controllers
             var account = _accountRepository.GetByEmail(model.Email);
 
             if (account == null)
-                return NotFound(new { message = "User of password invalid" });
+                return NotFound(new { message = "User or password invalid" });
 
             var isValid = BCrypt.Net.BCrypt.Verify(model.Password, account.Password);
 
-            if(!isValid) 
+            if (!isValid)
             {
-               return BadRequest("Invalid email or password");
+                return BadRequest("Invalid email or password");
             }
 
-            var token = TokenService.GenerateToken(account);
+            // Crie um objeto anônimo com as propriedades necessárias para o token JWT
+            var tokenPayload = new Account
+            {
+                Id = account.Id,
+                FirstName = account.FirstName,
+                LastName = account.LastName,
+                Email = account.Email,
+                Balance = account.Balance,
+                CreatedAt = account.CreatedAt,
+                UpdatedAt = account.UpdatedAt
+            };
+
+            var token = TokenService.GenerateToken(tokenPayload);
 
             account.Password = "";
 

@@ -28,12 +28,14 @@ namespace Financify_Api.Repositories
 
         public async Task AddAsync(Charge charge)
         {
+            charge.CreatedAt = charge.UpdatedAt = DateTime.UtcNow;
             await _dbContext.Set<Charge>().AddAsync(charge);
             await _dbContext.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(Charge charge)
         {
+            charge.UpdatedAt = DateTime.UtcNow;
             _dbContext.Entry(charge).State = EntityState.Modified;
             await _dbContext.SaveChangesAsync();
         }
@@ -42,6 +44,13 @@ namespace Financify_Api.Repositories
         {
             _dbContext.Set<Charge>().Remove(charge);
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Charge>> GetByAccountIdAsync(Guid accountId)
+        {
+            return await _dbContext.Set<Charge>()
+                .Where(c => c.AccountId == accountId)
+                .ToListAsync();
         }
     }
 }
