@@ -8,8 +8,6 @@ namespace Financify_Api.Data.Map
     {
         public void Configure(EntityTypeBuilder<Charge> builder)
         {
-            builder.ToTable("Charges");
-
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.Id)
@@ -33,6 +31,9 @@ namespace Financify_Api.Data.Map
             builder.Property(x => x.UpdatedAt)
                 .IsRequired();
 
+            builder.Property(x => x.Description)
+                .HasMaxLength(200); // Adicionado a configuração para a propriedade "Description"
+
             builder.Property(x => x.AccountId)
                 .IsRequired();
 
@@ -40,6 +41,8 @@ namespace Financify_Api.Data.Map
                 .WithMany()
                 .HasForeignKey(x => x.AccountId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.ToTable("Charges");
         }
     }
 }

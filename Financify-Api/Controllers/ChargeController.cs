@@ -22,6 +22,29 @@ namespace Financify_Api.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<ChargeResponse>>> GetAll()
+        {
+            try
+            {
+                var charges = await _chargeRepository.GetAllAsync();
+
+                if (charges == null)
+                {
+                    return NotFound();
+                }
+
+                var chargeResponses = _mapper.Map<List<ChargeResponse>>(charges);
+
+                return Ok(chargeResponses);
+            }
+            catch
+            {
+                return StatusCode(500, "Ocorreu um erro ao obter as cobranças.");
+            }
+        }
+
         [HttpGet("{id}")]
         [Authorize]
         public async Task<ActionResult<Charge>> GetById(Guid id)
@@ -84,10 +107,10 @@ namespace Financify_Api.Controllers
             }
 
             existingCharge.Name = charge.Name;
+            existingCharge.Description = charge.Description;
             existingCharge.DueDate = charge.DueDate;
             existingCharge.Value = charge.Value;
             existingCharge.Status = charge.Status;
-            existingCharge.UpdatedAt = DateTime.UtcNow;
 
             await _chargeRepository.UpdateAsync(existingCharge);
 
@@ -109,6 +132,29 @@ namespace Financify_Api.Controllers
             await _chargeRepository.DeleteAsync(charge);
 
             return NoContent();
+        }
+
+        [HttpGet("accounts/{accountId}")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<ChargeResponse>>> GetAllByAccountId(Guid accountId)
+        {
+            try
+            {
+                var charges = await _chargeRepository.GetByAccountIdAsync(accountId);
+
+                if (charges == null)
+                {
+                    return NotFound();
+                }
+
+                var chargeResponses = _mapper.Map<List<ChargeResponse>>(charges);
+
+                return Ok(chargeResponses);
+            }
+            catch
+            {
+                return StatusCode(500, "Ocorreu um erro ao obter as cobranças.");
+            }
         }
     }
 }
