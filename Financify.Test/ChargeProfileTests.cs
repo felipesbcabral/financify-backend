@@ -27,7 +27,7 @@ namespace Financify.Test
             {
                 Id = Guid.NewGuid(),
                 Name = "Teste",
-                Value = "100 ",
+                Value = 100,
                 Status = ChargeStatus.Pending,
                 CreatedAt = DateTime.UtcNow
             };
