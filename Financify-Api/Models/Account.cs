@@ -12,6 +12,10 @@
 
         public string Password { get; set; } = string.Empty;
 
+        public string? ResetToken { get; set; } = string.Empty;
+
+        public DateTime? ResetTokenExpires { get; set; }
+
         public decimal Balance { get; set; }
 
         public DateTime CreatedAt { get; set; }

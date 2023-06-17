@@ -1,8 +1,11 @@
 using Financify_Api;
 using Financify_Api.Data;
+using Financify_Api.Models;
 using Financify_Api.Models.Profiles;
 using Financify_Api.Repositories;
 using Financify_Api.Repositories.Interfaces;
+using Financify_Api.Services.EmailService;
+using Financify_Api.Services.Helper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -52,6 +55,17 @@ builder.Services.AddDbContext<FinancifyContext>(
 
 builder.Services.AddScoped<IChargeRepository, ChargeRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<ITokenService, SecurityHelper>();
+
+var emailConfig =
+    builder.Configuration.GetSection("EmailConfiguration")
+    .Get<EmailConfiguration>();
+builder.Services.AddSingleton(emailConfig);
+
+var serviceProvider = builder.Services.BuildServiceProvider();
+var dbContext = serviceProvider.GetRequiredService<FinancifyContext>();
+dbContext.Database.Migrate(); // Aplicar migrações pendentes
 
 var app = builder.Build();
 

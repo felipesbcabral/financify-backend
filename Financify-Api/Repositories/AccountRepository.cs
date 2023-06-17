@@ -14,15 +14,6 @@ namespace Financify_Api.Repositories
             _dbContext = financifyContext;
         }
 
-        public Account GetByEmail(string email)
-        {
-            var account = _dbContext.Set<Account>()
-                .AsEnumerable()
-                .FirstOrDefault(x => string.Equals(x.Email, email, StringComparison.CurrentCultureIgnoreCase));
-
-            return account;
-        }
-
         public async Task<Account> GetByIdAsync(Guid id)
         {
             return await _dbContext.Set<Account>()
@@ -52,6 +43,18 @@ namespace Financify_Api.Repositories
         {
             _dbContext.Set<Account>().Remove(account);
             await _dbContext.SaveChangesAsync();
+        }
+
+
+        public async Task<Account> GetByEmailAsync(string email)
+        {
+            return await _dbContext.Set<Account>()
+                .FirstOrDefaultAsync(a => a.Email == email);
+        }
+
+        public async Task<Account> GetByResetTokenAsync(string resetToken)
+        {
+            return await _dbContext.Accounts.FirstOrDefaultAsync(u => u.ResetToken == resetToken);
         }
     }
 }
