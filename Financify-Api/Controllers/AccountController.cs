@@ -1,5 +1,8 @@
 ﻿using Financify_Api.Models;
+using Financify_Api.Models.Requests;
+using Financify_Api.Models.Responses;
 using Financify_Api.Repositories.Interfaces;
+using Financify_Api.Services.EmailService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,10 +13,14 @@ namespace Financify_Api.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountRepository _accountRepository;
+        private readonly IEmailService _emailService;
+        private readonly ITokenService _tokenService;
 
-        public AccountController(IAccountRepository accountRepository)
+        public AccountController(IAccountRepository accountRepository, IEmailService emailService, ITokenService tokenService)
         {
             _accountRepository = accountRepository;
+            _emailService = emailService;
+            _tokenService = tokenService;
         }
 
         [HttpGet]
@@ -44,7 +51,7 @@ namespace Financify_Api.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<ActionResult<Account>> Create([FromBody] Account account)
         {
             if (!ModelState.IsValid)
@@ -103,6 +110,57 @@ namespace Financify_Api.Controllers
             {
                 return StatusCode(500, "An error occurred while deleting the account.");
             }
+        }
+
+        [HttpPost("send-email")]
+        public async Task<IActionResult> SendEmail([FromBody] ResetPasswordRequest request)
+        {
+            var user = await _accountRepository.GetByEmailAsync(request.Email);
+
+            if (user == null)
+            {
+                return BadRequest(new ApiResponse { Status = "Error", Message = "User not found" });
+            }
+
+            var token = _tokenService.GenerateRandomToken();
+            user.ResetToken = token;
+            user.ResetTokenExpires = DateTime.Now.AddDays(1);
+            await _accountRepository.UpdateAsync(user);
+
+            string emailContent = $"Olá! Você solicitou a recuperação de senha. Clique no link abaixo para redefinir sua senha:\n\n" +
+                                  $"Redefinir Senha: http://localhost:5173/reset?token={token}\n\n";
+
+            var emailMessage = new EmailMessage(new string[] { request.Email }, "Financify recuperação de Senha", emailContent);
+            _emailService.SendEmail(emailMessage);
+
+            return Ok(new ApiResponse { Status = "Success", Message = "Email sent successfully" });
+        }
+
+        [HttpPost("reset-password")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            var user = await _accountRepository.GetByResetTokenAsync(request.Token);
+
+            if (user == null)
+            {
+                return BadRequest(new ApiResponse { Status = "Error", Message = "User not found" });
+            }
+
+            if (user.ResetToken == null || user.ResetTokenExpires < DateTime.Now)
+            {
+                return BadRequest("Invalid Token.");
+            }
+
+            _tokenService.CreatePasswordHash(request.NewPassword, out string passwordHash);
+
+            user.Password = passwordHash;
+            user.ResetToken = null;
+            user.ResetTokenExpires = null;
+
+            await _accountRepository.UpdateAsync(user);
+
+            return Ok(new ApiResponse { Status = "Success", Message = "Password successfully reset" });
         }
     }
 }

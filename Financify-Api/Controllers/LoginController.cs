@@ -18,9 +18,9 @@ namespace Financify_Api.Controllers
 
         [HttpPost]
         [Route("login")]
-        public ActionResult<dynamic> Authenticate([FromBody] Account model)
+        public async Task<ActionResult<dynamic>> Authenticate([FromBody] Account model)
         {
-            var account = _accountRepository.GetByEmail(model.Email);
+            var account = await _accountRepository.GetByEmailAsync(model.Email);
 
             if (account == null)
                 return NotFound(new { message = "User or password invalid" });
