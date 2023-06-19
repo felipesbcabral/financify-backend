@@ -134,7 +134,7 @@ namespace Financify_Api.Controllers
             return NoContent();
         }
 
-        [HttpGet("accounts/{accountId}")]
+        [HttpGet("account/{accountId}")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<ChargeResponse>>> GetAllByAccountId(Guid accountId)
         {

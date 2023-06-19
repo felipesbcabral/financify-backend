@@ -162,5 +162,42 @@ namespace Financify_Api.Controllers
 
             return Ok(new ApiResponse { Status = "Success", Message = "Password successfully reset" });
         }
+
+        [HttpGet("balance/{accountId}")]
+        [Authorize]
+        public async Task<ActionResult<Account>> GetAccountBalance(Guid accountId)
+        {
+            var account = await _accountRepository.GetByIdAsync(accountId);
+            if (account == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(account);
+        }
+
+        [HttpPut("deposit/{id}")]
+        [Authorize]
+        public async Task<ActionResult<Account>> Deposit(Guid id, [FromBody] DepositRequest request)
+        {
+            var account = await _accountRepository.GetByIdAsync(id);
+            if (account == null)
+            {
+                return NotFound();
+            }
+
+            if (request.Valor <= 0)
+            {
+                return BadRequest("O valor do depósito deve ser maior que zero.");
+            }
+
+            // Realize as validações do método de pagamento, número do cartão, data de validade, código de segurança e senha aqui
+
+            account.Balance += request.Valor;
+            await _accountRepository.UpdateAsync(account);
+
+            return Ok(account);
+        }
+
     }
 }
