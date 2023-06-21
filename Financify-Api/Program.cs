@@ -65,7 +65,6 @@ builder.Services.AddSingleton(emailConfig);
 
 var serviceProvider = builder.Services.BuildServiceProvider();
 var dbContext = serviceProvider.GetRequiredService<FinancifyContext>();
-dbContext.Database.Migrate(); // Aplicar migrações pendentes
 
 var app = builder.Build();
 
