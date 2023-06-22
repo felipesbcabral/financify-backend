@@ -48,10 +48,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(ChargeProfile));
-
-builder.Services.AddDbContext<FinancifyContext>(
-    options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-);
+builder.Services.AddDbContext<FinancifyContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IChargeRepository, ChargeRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
@@ -65,7 +62,6 @@ builder.Services.AddSingleton(emailConfig);
 
 var serviceProvider = builder.Services.BuildServiceProvider();
 var dbContext = serviceProvider.GetRequiredService<FinancifyContext>();
-dbContext.Database.Migrate(); // Aplicar migrações pendentes
 
 var app = builder.Build();
 
