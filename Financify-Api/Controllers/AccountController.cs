@@ -128,7 +128,7 @@ namespace Financify_Api.Controllers
             await _accountRepository.UpdateAsync(user);
 
             string emailContent = $"Olá! Você solicitou a recuperação de senha. Clique no link abaixo para redefinir sua senha:\n\n" +
-                                  $"Redefinir Senha: http://localhost:5173/reset?token={token}\n\n";
+                                  $"Redefinir Senha: https://financify-frontend.vercel.app/reset?token={token}\n\n";
 
             var emailMessage = new EmailMessage(new string[] { request.Email }, "Financify recuperação de Senha", emailContent);
             _emailService.SendEmail(emailMessage);
